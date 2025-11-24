@@ -1,0 +1,21 @@
+services:
+  backend:
+    container_name: otahub-backend
+    build: ./backend/otahub
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/otahub:/app
+    environment:
+      - DEBUG=1
+  
+  frontend:
+    container_name: otahub-frontend
+    build: ./frontend/otahub-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/otahub-frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend

@@ -1,0 +1,15 @@
+# General
+.DS_Store
+
+# Python / Django
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+
+# Node / Frontend
+node_modules/
+dist/
+.env
