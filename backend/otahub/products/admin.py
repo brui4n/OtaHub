@@ -12,3 +12,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', 'price', 'stock', 'category')
     list_filter = ('category',)
     search_fields = ('name', 'author')
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'quantity')
+    search_fields = ('product__name',)
