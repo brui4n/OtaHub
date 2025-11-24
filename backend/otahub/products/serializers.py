@@ -21,8 +21,9 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     product_id = serializers.PrimaryKeyRelatedField(
         queryset = Product.objects.all(),
-        write_only = True
+        write_only = True,
+        source='product'
     )
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'producto_id', 'quantity', 'created_at', 'updated_at']
+        fields = ['id', 'product', 'product_id', 'quantity', 'created_at', 'updated_at']

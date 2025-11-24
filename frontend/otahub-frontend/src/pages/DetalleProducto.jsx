@@ -1,10 +1,32 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addToCart } from "../api";
 
 export default function DetalleProducto() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: addToCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      alert(`Producto "${product?.name || 'seleccionado'}" agregado al carrito`);
+    },
+    onError: (error) => {
+        console.error(error);
+        alert("Error al agregar al carrito");
+    }
+  });
+
+  const handleAddToCart = () => {
+    if (product) {
+        mutation.mutate({ product_id: product.id, quantity: 1 });
+    }
+  };
 
   useEffect(() => {
     async function fetchProduct() {
@@ -25,26 +47,7 @@ export default function DetalleProducto() {
   if (loading) return <p>Cargando...</p>;
   if (!product) return <p>No se encontró el producto.</p>;
 
-  const addToCart = () => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  const existing = cart.find(item => item.id === product.id);
-
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1
-    });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert(`Producto "${product.name}" agregado al carrito`);
-};
 
   return (
     <div style={{
@@ -127,9 +130,10 @@ export default function DetalleProducto() {
                 }}
                 onMouseOver={(e) => e.target.style.opacity = "0.85"}
                 onMouseOut={(e) => e.target.style.opacity = "1"}
-                onClick={addToCart}
+                onClick={handleAddToCart}
+                disabled={mutation.isPending}
                 >
-                🛒 Agregar al Carrito
+                {mutation.isPending ? "Agregando..." : "🛒 Agregar al Carrito"}
             </button>
         </div>
       </div>

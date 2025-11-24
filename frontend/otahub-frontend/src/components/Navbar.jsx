@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getCart } from "../api";
 
 export default function Navbar({ search, setSearch }) {
+  const { data: cart = [] } = useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+  });
+
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <nav 
       style={{
@@ -63,9 +72,27 @@ export default function Navbar({ search, setSearch }) {
         </div>
 
       {/* Enlaces */}
-      <div style={{ display: "flex", gap: "25px" }}>
+      <div style={{ display: "flex", gap: "25px", alignItems: "center" }}>
         <Link to="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
-        <Link to="/carrito" style={{ color: "white", textDecoration: "none" }}>Carrito</Link>
+        <Link to="/categorias" style={{ color: "white", textDecoration: "none" }}>Categorías</Link>
+        <Link to="/carrito" style={{ color: "white", textDecoration: "none", position: "relative" }}>
+          Carrito
+          {cartCount > 0 && (
+            <span style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-12px",
+              background: "#ef4444",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "12px",
+              fontWeight: "bold"
+            }}>
+              {cartCount}
+            </span>
+          )}
+        </Link>
       </div>
     </nav>
   );

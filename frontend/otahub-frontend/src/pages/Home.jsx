@@ -1,25 +1,18 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import ProductCard from "../components/ProductCard"
+import { getProducts } from "../api"
 
 export default function Home({ search }) {
-  const [products, setProducts] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/products/")
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data)
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error("Error cargando productos:", err)
-        setLoading(false)
-      })
-  }, [])
+  const { data: products = [], isLoading, isError } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  })
 
-  if (loading) return <p>Cargando productos...</p>
+  if (isLoading) return <p>Cargando productos...</p>
+  if (isError) return <p>Error cargando productos</p>
 
   // Filtro combinado (búsqueda + categoría)
   const filteredProducts = products
