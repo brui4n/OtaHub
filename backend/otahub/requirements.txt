@@ -2,3 +2,6 @@ django
 djangorestframework
 pillow
 django-cors-headers
+djangorestframework-simplejwt
+stripe
+python-dotenv

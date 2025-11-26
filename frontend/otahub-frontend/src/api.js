@@ -4,6 +4,33 @@ const api = axios.create({
   baseURL: "http://127.0.0.1:8000/api",
 })
 
+// Interceptor para agregar el token JWT a las peticiones
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Interceptor para manejar errores de autenticación
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+
 export const getProducts = async () => {
   const res = await api.get("/products/")
   return res.data
@@ -51,6 +78,34 @@ export const removeFromCart = async (id) => {
 
 export const clearCart = async () => {
   await api.delete("/cart/clear/") // Assuming custom action 'clear' on viewset
+}
+
+// Funciones de Autenticación
+export const register = async (userData) => {
+  const res = await api.post("/auth/register/", userData)
+  return res.data
+}
+
+export const login = async (credentials) => {
+  const res = await api.post("/auth/login/", credentials)
+  return res.data
+}
+
+export const getMe = async () => {
+  const res = await api.get("/auth/me/")
+  return res.data
+}
+
+// Funciones de Historial
+export const getHistorial = async () => {
+  const res = await api.get("/historial/")
+  return res.data
+}
+
+// Funciones de Checkout
+export const createCheckoutSession = async (cartItems) => {
+  const res = await api.post("/pay/create-checkout-session/", {})
+  return res.data
 }
 
 export default api

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
-import { getCart, updateCartItem, removeFromCart, getProduct } from "../api"
+import { getCart, updateCartItem, removeFromCart, getProduct, createCheckoutSession } from "../api"
+import { useState } from "react"
 
 export default function Carrito() {
   const queryClient = useQueryClient()
@@ -70,7 +71,26 @@ export default function Carrito() {
     removeMutation.mutate(id)
   }
 
-  if (isLoading) return <p>Cargando carrito...</p>
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      alert("Tu carrito está vacío")
+      return
+    }
+
+    setCheckoutLoading(true)
+    try {
+      const response = await createCheckoutSession()
+      // Redirigir a Stripe Checkout
+      window.location.href = response.url
+    } catch (error) {
+      alert(error.response?.data?.error || "Error al crear la sesión de pago")
+      setCheckoutLoading(false)
+    }
+  }
+
+  if (isLoading) return <p style={{ padding: "20px", color: "white" }}>Cargando carrito...</p>
 
   const total = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
 
@@ -209,9 +229,37 @@ export default function Carrito() {
               textAlign: "right",
               boxShadow: "0 -4px 6px rgba(0,0,0,0.1)"
           }}>
-              <h2 style={{ fontSize: "28px", margin: 0 }}>
+              <h2 style={{ fontSize: "28px", margin: "0 0 20px 0" }}>
                 Total a Pagar: <span style={{ color: "#34d399" }}>S/. {total.toFixed(2)}</span>
               </h2>
+              <button
+                onClick={handleCheckout}
+                disabled={checkoutLoading || cart.length === 0}
+                style={{
+                  width: "100%",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: checkoutLoading || cart.length === 0 ? "#4b5563" : "#34d399",
+                  color: "white",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  cursor: checkoutLoading || cart.length === 0 ? "not-allowed" : "pointer",
+                  transition: "background 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  if (!checkoutLoading && cart.length > 0) {
+                    e.target.style.background = "#10b981"
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!checkoutLoading && cart.length > 0) {
+                    e.target.style.background = "#34d399"
+                  }
+                }}
+              >
+                {checkoutLoading ? "Procesando..." : "Proceder al Pago"}
+              </button>
           </div>
         </div>
       )}
