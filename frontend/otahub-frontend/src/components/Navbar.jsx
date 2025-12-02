@@ -9,136 +9,95 @@ export default function Navbar({ search, setSearch }) {
   const { data: cart = [] } = useQuery({
     queryKey: ["cart"],
     queryFn: getCart,
-    enabled: !!user, // Solo hacer la query si el usuario está autenticado
+    enabled: !!user,
   });
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <nav 
-      style={{
-        width: "100%",
-        background: "#1f2937",
-        padding: "15px 30px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        color: "white",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        gap: "20px"
-      }}
-    >
+    <nav style={{
+      width: "100%",
+      background: "var(--surface)",
+      padding: "1rem 2rem",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      boxShadow: "var(--shadow)",
+      position: "sticky",
+      top: 0,
+      zIndex: 10,
+      borderBottom: "1px solid var(--border)"
+    }}>
       {/* Logo */}
       <Link 
         to="/" 
         style={{ 
           color: "white",
-          textDecoration: "none",
-          fontSize: "24px",
-          fontWeight: "bold"
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem"
         }}
       >
-        Otahub
+        <span style={{ fontSize: "1.8rem" }}>⛩️</span> Otahub
       </Link>
 
-        {/* 🔍 Barra de búsqueda oscura */}
-        <div 
-        style={{
-            display: "flex",
-            alignItems: "center",
-            background: "#374151", 
-            padding: "10px 14px",
-            borderRadius: "20px",
-            gap: "10px",
-            width: "350px",
-            boxShadow: "0 0 6px rgba(0,0,0,0.3)"
-        }}
-        >
-        <span style={{ fontSize: "18px", color: "#9CA3AF" }}>🔍</span>
+      {/* 🔍 Barra de búsqueda */}
+      <div style={{ position: "relative", width: "350px" }}>
+        <span style={{ 
+          position: "absolute", 
+          left: "12px", 
+          top: "50%", 
+          transform: "translateY(-50%)",
+          fontSize: "1.2rem"
+        }}>
+          🔍
+        </span>
         
         <input
-            type="text"
-            placeholder="Buscar producto..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-            flex: 1,
-            border: "none",
-            outline: "none",
-            background: "transparent",
-            color: "white",
-            fontSize: "16px"
-            }}
+          className="input"
+          type="text"
+          placeholder="Buscar manga..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ paddingLeft: "40px" }}
         />
-        </div>
+      </div>
 
       {/* Enlaces */}
-      <div style={{ display: "flex", gap: "25px", alignItems: "center" }}>
-        <Link to="/" style={{ color: "white", textDecoration: "none" }}>Home</Link>
-        <Link to="/categorias" style={{ color: "white", textDecoration: "none" }}>Categorías</Link>
+      <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+        <Link to="/" className="btn btn-outline" style={{ border: "none" }}>Home</Link>
+        <Link to="/categorias" className="btn btn-outline" style={{ border: "none" }}>Categorías</Link>
         
         {user ? (
           <>
-            <Link to="/carrito" style={{ color: "white", textDecoration: "none", position: "relative" }}>
-              Carrito
+            <Link to="/carrito" className="btn btn-outline" style={{ position: "relative", border: "none" }}>
+              🛒 Carrito
               {cartCount > 0 && (
-                <span style={{
+                <span className="badge" style={{
                   position: "absolute",
-                  top: "-8px",
-                  right: "-12px",
-                  background: "#ef4444",
-                  color: "white",
-                  borderRadius: "50%",
-                  padding: "2px 6px",
-                  fontSize: "12px",
-                  fontWeight: "bold"
+                  top: "-5px",
+                  right: "-5px",
                 }}>
                   {cartCount}
                 </span>
               )}
             </Link>
-            <Link to="/historial" style={{ color: "white", textDecoration: "none" }}>Historial</Link>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ color: "#9ca3af", fontSize: "14px" }}>{user.username}</span>
-              <button
-                onClick={logout}
-                style={{
-                  background: "#ef4444",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 16px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500"
-                }}
-                onMouseEnter={(e) => e.target.style.background = "#dc2626"}
-                onMouseLeave={(e) => e.target.style.background = "#ef4444"}
-              >
+            <Link to="/historial" className="btn btn-outline" style={{ border: "none" }}>📜 Historial</Link>
+            
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginLeft: "1rem" }}>
+              <span style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Hola, {user.username}</span>
+              <button onClick={logout} className="btn btn-danger">
                 Salir
               </button>
             </div>
           </>
         ) : (
-          <>
-            <Link to="/login" style={{ color: "white", textDecoration: "none" }}>Iniciar Sesión</Link>
-            <Link 
-              to="/register" 
-              style={{ 
-                color: "white", 
-                textDecoration: "none",
-                background: "#646cff",
-                padding: "8px 16px",
-                borderRadius: "6px",
-                fontWeight: "500"
-              }}
-            >
-              Registrarse
-            </Link>
-          </>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <Link to="/login" className="btn btn-outline">Iniciar Sesión</Link>
+            <Link to="/register" className="btn btn-primary">Registrarse</Link>
+          </div>
         )}
       </div>
     </nav>

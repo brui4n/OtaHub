@@ -31,21 +31,14 @@ export default function Home({ search }) {
     )
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       <h1>Todos los Productos</h1>
 
       {/* Botones de filtro dinámicos */}
-      <div style={{ margin: "20px 0", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+      <div style={{ margin: "2rem 0", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
         <button 
           onClick={() => setSelectedCategory(null)}
-          style={{
-            background: selectedCategory === null ? "#3b82f6" : "#1f2937",
-            color: "white",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
+          className={`btn ${selectedCategory === null ? "btn-primary" : "btn-outline"}`}
         >
           Todos
         </button>
@@ -54,14 +47,7 @@ export default function Home({ search }) {
           <button 
             key={cat.id} 
             onClick={() => setSelectedCategory(cat.name)}
-            style={{
-              background: selectedCategory === cat.name ? "#3b82f6" : "#1f2937",
-              color: "white",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer"
-            }}
+            className={`btn ${selectedCategory === cat.name ? "btn-primary" : "btn-outline"}`}
           >
             {cat.name}
           </button>
@@ -69,14 +55,7 @@ export default function Home({ search }) {
       </div>
 
       {/* Grid de productos */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: "20px",
-          marginTop: "20px"
-        }}
-      >
+      <div className="grid-products">
         {filteredProducts.map(prod => (
           <ProductCard key={prod.id} product={prod} />
         ))}
