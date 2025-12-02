@@ -3,7 +3,13 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Category(models.Model):
+    CATEGORY_TYPES = (
+        ('demography', 'Demografía'),
+        ('genre', 'Género'),
+    )
+
     name = models.CharField(max_length=100, unique=True)
+    type = models.CharField(max_length=20, choices=CATEGORY_TYPES, default='demography')
     image = models.ImageField(upload_to='categories/', null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -13,9 +19,17 @@ class Category(models.Model):
         return self.name
     
 class Product(models.Model):
+    PRODUCT_TYPES = (
+        ('manga', 'Manga'),
+        ('ln', 'Light Novel'),
+        ('manhwa', 'Manhwa'),
+        ('manhua', 'Manhua'),
+    )
+
     name = models.CharField(max_length=150)
     volume = models.IntegerField(null=True, blank=True)
     author = models.CharField(max_length=100)
+    type = models.CharField(max_length=20, choices=PRODUCT_TYPES, default='manga')
     price = models.DecimalField(max_digits=8, decimal_places=2)
     stock = models.IntegerField(default=0)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
