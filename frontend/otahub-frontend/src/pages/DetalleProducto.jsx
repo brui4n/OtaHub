@@ -18,7 +18,8 @@ export default function DetalleProducto() {
     },
     onError: (error) => {
         console.error(error);
-        alert("Error al agregar al carrito");
+        const msg = error.response?.data?.error || "Error al agregar al carrito";
+        alert(msg);
     }
   });
 

@@ -13,7 +13,12 @@ export default function ProductCard({ product }) {
     mutationFn: addToCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] })
+      alert("Producto agregado al carrito")
     },
+    onError: (error) => {
+      const msg = error.response?.data?.error || "Error al agregar al carrito"
+      alert(msg)
+    }
   })
 
   const handleAddToCart = () => {
@@ -72,6 +77,12 @@ export default function ProductCard({ product }) {
         <p style={{ fontSize: "1.25rem", fontWeight: "bold", color: "var(--secondary)", margin: "0 0 1rem 0" }}>
             S/. {product.price}
         </p>
+        
+        {product.stock <= 0 && (
+            <p style={{ color: "#ef4444", fontWeight: "bold", fontSize: "0.9rem", marginTop: "-0.5rem", marginBottom: "1rem" }}>
+                Agotado
+            </p>
+        )}
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center", marginTop: "auto" }}>
@@ -85,10 +96,11 @@ export default function ProductCard({ product }) {
 
         <button
             onClick={handleAddToCart}
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || product.stock <= 0}
             className="btn btn-secondary"
+            style={{ opacity: product.stock <= 0 ? 0.5 : 1, cursor: product.stock <= 0 ? "not-allowed" : "pointer" }}
         >
-            {mutation.isPending ? "..." : "Agregar"}
+            {mutation.isPending ? "..." : product.stock <= 0 ? "Sin Stock" : "Agregar"}
         </button>
       </div>
     </div>
