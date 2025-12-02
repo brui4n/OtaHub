@@ -44,96 +44,127 @@ export default function DetalleProducto() {
     fetchProduct();
   }, [id]);
 
-  if (loading) return <p>Cargando...</p>;
-  if (!product) return <p>No se encontró el producto.</p>;
+  if (loading) return <div className="container" style={{ textAlign: "center", marginTop: "2rem" }}>Cargando...</div>;
+  if (!product) return <div className="container" style={{ textAlign: "center", marginTop: "2rem" }}>No se encontró el producto.</div>;
 
-
+  const getTypeLabel = (type) => {
+      const types = {
+          'manga': 'Manga',
+          'ln': 'Light Novel',
+          'manhwa': 'Manhwa',
+          'manhua': 'Manhua'
+      };
+      return types[type] || type;
+  };
 
   return (
-    <div style={{
-      maxWidth: "1100px",
-      margin: "40px auto",
-      padding: "0 20px",
-    }}>
-
-      {/* Botón volver al home */}
-      <Link 
-        to="/" 
-        style={{
-          display: "inline-block",
-          marginBottom: "25px",
-          padding: "8px 15px",
-          background: "#374151",
-          color: "white",
-          borderRadius: "6px",
-          textDecoration: "none",
-          fontSize: "14px",
-          transition: "0.2s"
-        }}
-        onMouseOver={(e) => e.target.style.opacity = "0.8"}
-        onMouseOut={(e) => e.target.style.opacity = "1"}
-      >
-        ⬅ Volver al inicio
+    <div className="container" style={{ marginTop: "2rem" }}>
+      
+      {/* Botón volver */}
+      <Link to="/" className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "2rem" }}>
+        <span>←</span> Volver al inicio
       </Link>
 
-      <div style={{
-        display: "flex",
-        gap: "40px",
-        alignItems: "flex-start"
-      }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "3rem", alignItems: "start" }}>
         
-        {/* Imagen */}
-        <img
-          src={product.image}
-          alt={product.name}
-          style={{
-            width: "350px",
-            height: "auto",
-            borderRadius: "12px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.4)",
-            objectFit: "cover",
-            background: "#111"
-          }}
-        />
+        {/* Columna Imagen */}
+        <div style={{ position: "sticky", top: "2rem" }}>
+            <div className="card" style={{ padding: 0, overflow: "hidden", border: "none", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}>
+                <img
+                    src={product.image || "https://via.placeholder.com/400x600?text=Sin+Imagen"}
+                    alt={product.name}
+                    style={{
+                        width: "100%",
+                        height: "auto",
+                        display: "block",
+                        objectFit: "cover"
+                    }}
+                />
+            </div>
+        </div>
 
-        {/* Info */}
-        <div style={{ flex: 1 }}>
-          <h1 style={{ marginBottom: "10px" }}>{product.name}</h1>
+        {/* Columna Detalles */}
+        <div>
+            <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+                <span style={{ 
+                    background: "var(--primary)", 
+                    color: "white", 
+                    padding: "0.25rem 0.75rem", 
+                    borderRadius: "9999px", 
+                    fontSize: "0.875rem", 
+                    fontWeight: "600" 
+                }}>
+                    {getTypeLabel(product.type)}
+                </span>
+                <span style={{ 
+                    background: "var(--secondary)", 
+                    color: "white", 
+                    padding: "0.25rem 0.75rem", 
+                    borderRadius: "9999px", 
+                    fontSize: "0.875rem", 
+                    fontWeight: "600" 
+                }}>
+                    {product.category.name}
+                </span>
+            </div>
 
-          <p><strong>Categoría:</strong> {product.category.name}</p>
-          <p><strong>Volumen:</strong> {product.volume ?? "—"}</p>
-          <p><strong>Autor:</strong> {product.author}</p>
-          <p><strong>Precio:</strong> S/. {product.price}</p>
-          <p><strong>Stock disponible:</strong> {product.stock}</p>
+            <h1 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "0.5rem", lineHeight: "1.2" }}>
+                {product.name}
+            </h1>
+            
+            <p style={{ fontSize: "1.25rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>
+                por <span style={{ color: "var(--text-light)" }}>{product.author}</span>
+            </p>
 
-          <p style={{
-            marginTop: "20px",
-            lineHeight: "1.6",
-            background: "rgba(255,255,255,0.05)",
-            padding: "15px",
-            borderRadius: "8px"
-          }}>
-            {product.description}
-          </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "2rem", marginBottom: "2rem", padding: "1.5rem", background: "var(--card-bg)", borderRadius: "1rem", border: "1px solid var(--border)" }}>
+                <div>
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Precio</p>
+                    <p style={{ fontSize: "2rem", fontWeight: "700", color: "var(--primary)" }}>
+                        S/. {product.price}
+                    </p>
+                </div>
+                <div style={{ width: "1px", height: "40px", background: "var(--border)" }}></div>
+                <div>
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Stock</p>
+                    <p style={{ fontSize: "1.25rem", fontWeight: "600", color: product.stock > 0 ? "#10b981" : "#ef4444" }}>
+                        {product.stock > 0 ? `${product.stock} unidades` : "Agotado"}
+                    </p>
+                </div>
+            </div>
+
+            <div style={{ marginBottom: "2rem" }}>
+                <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.5rem" }}>
+                    Sinopsis
+                </h3>
+                <p style={{ lineHeight: "1.8", color: "var(--text-light)", fontSize: "1.1rem", whiteSpace: "pre-line" }}>
+                    {product.description}
+                </p>
+            </div>
 
             <button
-                style={{
-                    padding: "10px 20px",
-                    marginTop: "20px",
-                    background: "#2563eb",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    transition: "0.2s"
+                className="btn btn-primary"
+                style={{ 
+                    width: "100%", 
+                    padding: "1rem", 
+                    fontSize: "1.1rem", 
+                    display: "flex", 
+                    justifyContent: "center", 
+                    alignItems: "center", 
+                    gap: "0.5rem" 
                 }}
-                onMouseOver={(e) => e.target.style.opacity = "0.85"}
-                onMouseOut={(e) => e.target.style.opacity = "1"}
                 onClick={handleAddToCart}
-                disabled={mutation.isPending}
-                >
-                {mutation.isPending ? "Agregando..." : "🛒 Agregar al Carrito"}
+                disabled={mutation.isPending || product.stock === 0}
+            >
+                {mutation.isPending ? (
+                    "Agregando..."
+                ) : product.stock === 0 ? (
+                    "Agotado"
+                ) : (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        Agregar al Carrito
+                    </>
+                )}
             </button>
         </div>
       </div>
